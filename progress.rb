@@ -7,6 +7,10 @@ module Progress
   
   WIDTH = `tput cols`.to_i - 2
   
+  def height
+    `tput lines`.to_i
+  end
+  
   def percent_done
   	("%0.4f" % (current.call.to_f / total.call)).to_f
   end
@@ -29,11 +33,16 @@ module Progress
   end
 
   def output
-  	s = status
-  	puts "\033[2J"
-  	puts s
-  	puts progress
-  	print "\033[2B"
+    s = status
+
+    unless @cleared
+      puts "\n\n"
+      @cleared = true
+    end
+    
+    print "\033[2A" # up 2 lines
+    puts s
+    puts progress
   end
 end
 
