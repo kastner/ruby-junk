@@ -3,7 +3,7 @@ module Convert
   
   def start(start_file)
     Thread.new do
-      system(%Q{/Library/Application\\ Support/Techspansion/vh131ffmpeg -y -i #{start_file} -threads 4 -s 800x480 -aspect 800/480 -r 23.98 -vcodec h264 -g 200 -qmin 8 -b 230k -bf 1 -level 41 -loop 1 -sc_threshold 40 -partp4x4 1 -rc_eq "blurCplx^(1-qComp)" -refs 3 -qmax 51 -async 50 -acodec libfaac -ar 48000 -ac 2 -ab 128k #{start_file}.mp4 2>> #{file}; echo done >> #{done_file}})
+      system(%Q{/Library/Application\\ Support/Techspansion/vh131ffmpeg -y -i #{start_file} -threads 4 -s 720x400 -aspect 720:400 -r ntsc-film -vcodec h264 -g 150 -qmin 20 -b 1200k -level 30 -loop 1 -sc_threshold 40 -partp4x4 1 -rc_eq "blurCplx^(1-qComp)" -refs 2 -qmax 51 -maxrate 1450k -keyint_min 40 -async 50 -acodec libfaac -ar 48000 -ac 2 -ab 128k #{start_file}.mp4 2>> #{file}; echo done >> #{done_file}})
     end
     
     while(!File.exists?(file))
