@@ -11,16 +11,19 @@ ensure
   system "stty -raw echo"
 end
 
+url = ARGV[0] || 'http://www.freesound.org/packsViewSingle.php?id=1454'
+
 puts "Fetching MP3s..."
 mp3s = []
-open('http://www.freesound.org/packsViewSingle.php?id=1454').read.scan(/http:\/\/[^"]+?\.mp3/).each_with_index do |mp3, i|
+@total_samples = 0
+open(url).read.scan(/http:\/\/[^"]+?\.mp3/).each_with_index do |mp3, i|
   break if i > 9
   puts "Loading #{mp3}"
   mp3s << NSSound.alloc.initWithContentsOfURL_byReference(NSURL.alloc.initWithString(mp3), 1)
+  @total_samples = i
 end
 
-puts "Done. Now hit number 0-9 to play sounds. (ctrl-c or ESC to end)"
- }
+puts "Done. Now hit number 0-#{@total_samples} to play sounds. (ctrl-c or ESC to end)"
 
 while(1)
   c = read_char
