@@ -50,7 +50,7 @@ end
 
 raise "usage #{$0} <path to replay file> [<player to show>]" unless ARGV[0]
 replay = open(ARGV[0]).read
-only_player = ARGV[1].chomp
+only_player = (ARGV[1] && ARGV[1].chomp)
 
 @players = {}
 replay.each_line do |line|
@@ -61,6 +61,7 @@ replay.each_line do |line|
     puts "\nFrame: #{$1.to_i}\n"
   when /^JOINT (0|1); (.*)$/
     next if only_player && only_player != @players[$1.to_i]
+    puts "\n\tPlayer: #{@players[$1.to_i] || $1.to_i}"
     $2.scan(/\d+\s+\d+/).map {|p| p.split(/\s+/)}.each do |(joint, state)|
       puts "\t\t#{state_of_joint(state.to_i, joint.to_i)} #{@joint_list[joint.to_i]}\n"
     end
