@@ -1,6 +1,13 @@
 #!/usr/bin/env ruby
-
 %w|rubygems active_record irb|.each {|lib| require lib}
+
+class Number < ActiveRecord::Base
+  belongs_to :group
+end
+
+class Group < ActiveRecord::Base
+  has_many :numbers
+end
 
 ActiveRecord::Base.logger = Logger.new(STDOUT)
 ActiveRecord::Base.establish_connection(
@@ -9,24 +16,22 @@ ActiveRecord::Base.establish_connection(
 )
 
 ActiveRecord::Schema.define do
-  create_table :fruits, :force => true do |t|
-    t.string :name
+  create_table :numbers do |t|
+    t.integer :number
+    t.belongs_to :group
   end
-  create_table :flavors do |t|
+  
+  create_table :groups do |t|
     t.string :name
-    t.belongs_to :fruit
+  end  
+end
+
+10.times do |i|
+  start = i * 10 + 1
+  group = Group.create(:name => "#{start} to #{start+9}")
+  10.times do |i|
+    group.numbers << Number.create(:number => i + start)
   end
 end
-
-class Fruit < ActiveRecord::Base
-  validates_presence_of :name
-  has_many :flavors
-end
-
-class Flavor < ActiveRecord::Base
-  belongs_to :fruit
-end
-
-Fruit.create(:name => "apple")
 
 IRB.start if __FILE__ == $0
