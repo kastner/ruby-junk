@@ -2,13 +2,18 @@
 #####################################################################################
 # Extract images from Saks
 # 
+# Usage: extract-saks.rb <product-id>
+#
 # Requires:
 #   nokogiri gem
 #   swftools
 #   imagemagick (command line)
 #
-# Change the prod variable and run
+# Installing imagemagick (for the montage tool):
+# brew install imagemagick
 #
+# Installing swftools (for the swfextract tool):
+# brew install swftools
 #####################################################################################
 
 prod = ARGV[0] || "845524446172650"
