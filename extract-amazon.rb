@@ -36,6 +36,7 @@ tiles_x.times do |x|
   tiles_y.times do |y|
     zoom = "_SCR(#{z_level},#{x},#{y})_"
     image = url % [vip, asin, zoom, ou, size, variant, version, ext]
+    raise image
     %x|curl "#{image}" -o #{tmp_path}/#{y}x#{x}.jpg|
   end
 end
