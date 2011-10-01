@@ -1,24 +1,23 @@
-#iOS 5 MBDB Parser
-#=================
+# iOS 5 MBDB Parser
+# =================
 #
-#by Erik Kastner <kastner@gmail.com>
+# by Erik Kastner <kastner@gmail.com>
 #
-#MBDB format explanation from here: http://code.google.com/p/iphonebackupbrowser/wiki/MbdbMbdxFormat
+# MBDB format explanation from here: http://code.google.com/p/iphonebackupbrowser/wiki/MbdbMbdxFormat
 #
-#The entry / file system hash file mapping was reverse engineered.
-#
-#
-#Usage
-#-----
-#
-#ruby mbdb_parser.rb "<path_to_your_Manifest.mbdb_file>"
+# The entry / file system hash file mapping was reverse engineered.
 #
 #
-#Tests
-#-----
+# Usage
+# -----
 #
-#* run them: `ruby mbdb_parser.rb`
+# ruby mbdb_parser.rb "<path_to_your_Manifest.mbdb_file>"
 #
+#
+# Tests
+# -----
+#
+# * run them: `ruby mbdb_parser.rb`
 
 require 'openssl'
 
