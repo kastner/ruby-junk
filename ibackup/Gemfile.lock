@@ -1,0 +1,20 @@
+GIT
+  remote: https://github.com/georgi/rack_dav.git
+  revision: 72fc220ed0235811f4560467d9e66f4864e3ccbf
+  specs:
+    rack_dav (0.2.dev)
+      nokogiri
+      rack (~> 1.2.0)
+
+GEM
+  remote: http://rubygems.org/
+  specs:
+    nokogiri (1.5.0)
+    rack (1.2.4)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  rack
+  rack_dav!
