@@ -38,14 +38,9 @@ class MBDBEntry
   attr_accessor :permissions, :path, :domain, :hash, :file_size, :children, :full_path
   attr_accessor :link_target, :atime, :mtime, :ctime, :flag, :dummy
 
-  def initialize
+  def initialize(dummy = false)
     @atime = @mtime = @ctime = Time.now
-    @dummy = true
-  end
-
-  def permissions=(perms)
-    @permissions = perms
-    @dummy = false
+    @dummy = dummy
   end
 
   def directory?

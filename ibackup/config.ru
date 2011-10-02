@@ -31,18 +31,24 @@ $TREE ||= begin
     # raise path if entry.hash == "3a278dfb79753a5e64da864c4ad0e2daa55a2492"
 
     tree[path] ||= entry
-    if tree[path].dummy
-      tree[path].copy(entry)
-    end
-    
+
+    tree[path].copy(entry) unless tree[path].file_size
 
     while path != File::SEPARATOR
       up_path = File.join(File.dirname(path), "")
 
-      tree[up_path] ||= MBDBEntry.new
+      tree[up_path] ||= begin
+        entry = MBDBEntry.new(true)
+        entry.full_path = up_path
+        entry.permissions = 0o40755
+        entry.hash = SillyHasher.hash([path])
+        entry.file_size = 0
+        entry
+      end
+      
+      # puts "#{tree[up_path]}"
+      
       tree[up_path].children ||= []
-      tree[up_path].full_path = up_path unless tree[up_path].full_path
-      tree[up_path].hash = SillyHasher.hash([path]) unless tree[up_path].hash
       tree[up_path].children << tree[path] unless tree[up_path].children.include?(tree[path])
       
       # raise tree[up_path].full_path.class.inspect
@@ -54,6 +60,7 @@ $TREE ||= begin
   tree
 end
 
-use Rack::CommonLogger
+# use Rack::CommonLogger
 
 run RackDAV::Handler.new(:resource_class => MBDBFS, :backup_path => ENV["BACKUP_PATH"], :tree => $TREE)
+# run RackDAV::Handler.new(:root => "/tmp")

@@ -6,7 +6,14 @@ class MBDBFS < RackDAV::Resource
   end
 
   def collection?
-    entry.children
+    entry.directory?
+  end
+
+  # If this is a collection, return the child resources.
+  def children
+    (entry.children || []).map do |ch|
+      self.class.new(ch.full_path, options)
+    end
   end
 
   def etag
@@ -18,7 +25,7 @@ class MBDBFS < RackDAV::Resource
   end
 
   def file_path
-    # puts "path: #{path}, t: #{entry.inspect}"
+    # puts "path is #{path}"
     File.join(@options[:backup_path], entry.hash)
   end
 
@@ -29,57 +36,66 @@ class MBDBFS < RackDAV::Resource
   def last_modified
     entry.mtime
   end
+  
+  def creation_date
+    entry.ctime
+  end
 
   def get(request, response)
-    files = entry.children.map do |child|
-      path = child.full_path
-      basename = File.basename(path)
+    if entry.directory?
+      files = entry.children.map do |child|
+        path = child.full_path
+        basename = File.basename(path)
 
-      if child.directory?
-        # puts "DIRECTORY HERE #{child}"
-        type = "directory"
-        basename << "/"
-        size = "-"
-      else
-        # puts "IN HERE #{child}"
-        file = File.join(@options[:backup_path], child.hash)
-        # puts "file: #{file}"
-        type = mime_type(basename, DefaultMimeTypes)
-        
-        # hack
-        # type = `file --mime-type -b "#{file}"`.chomp
-        size = child.file_size
+        if child.directory?
+          type = "directory"
+          basename << "/"
+          size = "-"
+        else
+          file = File.join(@options[:backup_path], child.hash)
+          type = mime_type(basename, DefaultMimeTypes)        
+          size = child.file_size
+        end
+
+        Rack::Directory::DIR_FILE % [child.full_path, basename, size, type, child.mtime.httpdate]
       end
+      
+      files.unshift(Rack::Directory::DIR_FILE % ['../', 'Parent Directory', '', '', ''])
 
-      Rack::Directory::DIR_FILE % [child.full_path, basename, size, type, child.mtime]
+      content = Rack::Directory::DIR_PAGE % [path, path, files.join("\n")]
+      response.body = [content]
+      response['Content-Length'] = content.size.to_s
+    else
+      file = Rack::File.new(nil)
+      file.path = file_path
+      response.body = file
     end
-
-    content = Rack::Directory::DIR_PAGE % [path, path, files.join("\n")]
-    response.body = [content]
-    response['Content-Length'] = content.size.to_s
-
-    # if entry.children
-    #   content = ""
-    #   Rack::Directory.new(root).call(request.env)[2].each { |line| content << line }
-    #   response.body = [content]
-    #   response['Content-Length'] = content.size.to_s
-    # else
-    #   file = Rack::File.new(nil)
-    #   file.path = file_path
-    #   response.body = file
-    # end
   end
 
   def content_type
-    puts "#{entry}"
-    if entry.children
+    if entry.directory?
       "text/html"
     else
-      mime_type(file_path, DefaultMimeTypes)
+      mime_type(File.basename(entry.path), DefaultMimeTypes)
     end
+  end
+
+  def resource_type
+    if collection?
+      Nokogiri::XML::fragment('<D:collection xmlns:D="DAV:"/>').children.first
+    end
+  end
+
+  def post(request, response)
+    raise HTTPStatus::Forbidden
   end
 
   def tree
     @options[:tree]
+  end
+  
+  def to_s
+    # "RESOURCE: #{entry}"
+    "RESOURCE: #{path}"
   end
 end
