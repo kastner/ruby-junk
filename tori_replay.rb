@@ -41,7 +41,7 @@ def state_of_joint(state, joint)
     return @joint_states[state][3]    
   when 5,8: # lower/raise (shoulder)
     return @joint_states[state][1]
-  when 12,13,14,15: # extend/contract reversed
+  when 3,12,13,14,15,18,19: # extend/contract reversed
     return @joint_states[((state == 1) ? 2 : 1)][0]
   else
     return @joint_states[state][0]
