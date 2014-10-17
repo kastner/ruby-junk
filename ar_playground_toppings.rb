@@ -61,14 +61,14 @@ end
 zorba = Restaurant.create(:name => "Zorba's!", :phone => "1234")
 small_pizza = Item.create(:name => "small pizza", :price => 9, :restaurant => zorba)
 green_pepper = Item.create(:name => "green peppers", :price => 1)
-pinapple = Item.create(:name => "pineapple", :price => 1)
+pineapple = Item.create(:name => "pineapple", :price => 1)
 
 peppers_on_pizza = Topping.create({
   :item => small_pizza, :sub_item => green_pepper, :additional_price => 2
 })
 
-pinapple_on_pizza = Topping.create({
-  :item => small_pizza, :sub_item => pinapple, :additional_price => 10
+pineapple_on_pizza = Topping.create({
+  :item => small_pizza, :sub_item => pineapple, :additional_price => 10
 })
 
 
