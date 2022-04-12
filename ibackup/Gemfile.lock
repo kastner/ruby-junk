@@ -11,7 +11,11 @@ GEM
   specs:
     daemons (1.1.4)
     eventmachine (0.12.10)
-    nokogiri (1.5.0)
+    mini_portile2 (2.8.0)
+    nokogiri (1.13.4)
+      mini_portile2 (~> 2.8.0)
+      racc (~> 1.4)
+    racc (1.6.0)
     rack (1.2.4)
     thin (1.2.11)
       daemons (>= 1.0.9)
